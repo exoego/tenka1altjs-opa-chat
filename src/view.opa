@@ -1,5 +1,14 @@
 module View {
   PAGE_TITLE = "#tenka1altjs chat"
+  NTH_PARSER = parser {
+    case "1": "st"
+    case "2": "nd"
+    case "3": "rd"
+    case "1" [02-9] .*: "st"
+    case "2" [02-9] .*: "nd"
+    case "3" [02-9] .*: "rd"
+    default:  "th"
+  }
 
   function page_template(content) {
     <div class="navbar navbar-inverse navbar-fixed-top">{header(PAGE_TITLE)}</div>
@@ -72,7 +81,13 @@ module View {
   }
 
   function welcome(author){
-    #conversation += system_message(<span>Welcome, you joined room as {user_name(author)}</span>);
+    counter = Counter.get()
+    parsed = Parser.try_parse(NTH_PARSER, String.reverse(counter))
+    nth = counter + match(parsed) {
+      case {some: n}: n
+      default: ""
+    }
+    #conversation += system_message(<span>Welcome {user_name(author)}, you are {nth} visitor.</span>);
   }
 
   function about_app(author){
@@ -93,7 +108,7 @@ module View {
   }
 
   function user_style(author) {
-    (r, g, b)  = author.textColor
+    (r, g, b)  = author.textColor;
     css { color: rgb(r, g, b) ; }
   }
 

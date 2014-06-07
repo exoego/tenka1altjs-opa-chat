@@ -29,3 +29,12 @@ module Chatroom {
     {name:"user_" + String.uppercase(Random.string(4)), ~textColor, state:{IN}}
   }
 }
+
+database int /access_counter = 0;
+
+module Counter {
+  function get(){
+    /access_counter++
+    "{/access_counter}"
+  }
+}
